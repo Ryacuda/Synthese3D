@@ -51,6 +51,15 @@ void test_tree()
 	Vector3D closest = findClosestPoint(v, p);
 
 	std::cout << closest << std::endl;
+
+	std::unique_ptr<Tree> t = Tree::makeTree(v);
+
+	for (int i = 0; i < v.size(); i++)
+	{
+		const Vector3D closest = t->findClosestPoint(p);
+		std::cout << closest << std::endl;
+		std::cout << (closest - p).norme() << "\n";
+	}
 }
 
 int main()

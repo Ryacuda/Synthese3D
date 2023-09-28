@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "Sphere.hpp"
 #include "Ray.hpp"
 

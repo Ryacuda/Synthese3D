@@ -125,65 +125,75 @@ void illum_two()
 	Magick::Image image(Magick::Geometry(image_width, image_height), Magick::ColorRGB(0, 0, 0));
 
 	// objects
-	std::vector<Sphere> sphere_vec;
-	sphere_vec.emplace_back(Vector3D(400, 300, 400), 100);
+	std::vector<Sphere> sphere_list;
+	sphere_list.emplace_back(Vector3D(600, 300, 400), 100);
+	sphere_list.emplace_back(Vector3D(200, 300, 400), 100);
+	sphere_list.emplace_back(Vector3D(image_width/2, image_height/2, 0), 2000);
 
 	const Light light1(Vector3D(200, -800, 0), 1000000);
 
-	for (unsigned int x = 0; x < image_height; x++)
+	for (unsigned int x = 0; x < image_width; x++)
 	{
-		for (unsigned int y = 0; y < image_width; y++)
+		for (unsigned int y = 0; y < image_height; y++)
 		{
-			double red = 0;
-			double green = 0;
-			double blue = 0;
-
 			const Ray r(Vector3D(x, y, 0), Vector3D(0, 0, 1));
 
-			bool hit = false;
-			Vector3D closest_hit(0,0,0);
-			double squared_dist_from_closest_hit = std::numeric_limits<double>::infinity();
-			Vector3D normal_at_closest_hit(0,0,0);
+			Vector3D closest_hit(0, 0, 0);
+			double squared_dist_to_closest_hit = std::numeric_limits<double>::infinity();
+			Vector3D normal_at_closest_hit(0, 0, 0);
+			bool intersection = false;
 
-			for (const Sphere& sphere : sphere_vec)
+			for (const Sphere& s : sphere_list)
 			{
-				std::optional<Vector3D> p_i = r.hit(sphere);
+				std::optional<Vector3D> p_i = r.hit(s);
 
-				if (p_i.has_value() && (p_i.value() - r.getOrigin()).normeSQ() < squared_dist_from_closest_hit)
+				if (p_i.has_value())
 				{
-					hit = true;
-					closest_hit = p_i.value();
-					squared_dist_from_closest_hit = (p_i.value() - r.getOrigin()).normeSQ();
-					normal_at_closest_hit = sphere.normal(p_i.value());
-				}
-			}
-			
-			Vector3D light_dir = closest_hit - light1.getPosition();
+					double squared_dist = (r.getOrigin() - p_i.value()).normeSQ();
 
-			const Ray lightray(light1.getPosition(), light_dir / light_dir.norme());
-
-			double dist_to_light = (closest_hit - light1.getPosition()).norme() - 0.001;
-
-			for (const Sphere& sphere : sphere_vec)
-			{
-				std::optional<Vector3D> p_light = lightray.hit(sphere);
-
-				if (p_light.has_value() && (p_light.value() - light1.getPosition()).norme() >= dist_to_light)
-				{
-					double dp = dotProduct(normal_at_closest_hit, lightray.getDirection());		// == cos(angle)
-
-					if (dp < 0)
+					if (squared_dist < squared_dist_to_closest_hit)
 					{
-						dp = -dp;
+						closest_hit = p_i.value();
+						normal_at_closest_hit = s.normal(p_i.value());
+						squared_dist_to_closest_hit = squared_dist;
+						intersection = true;
 					}
-
-					red += light1.getIntensity() * dp / (dist_to_light * dist_to_light);
-					green += light1.getIntensity() * dp / (dist_to_light * dist_to_light);
-					blue += light1.getIntensity() * dp / (dist_to_light * dist_to_light);
 				}
 			}
 
-			image.pixelColor(x, y, Magick::ColorRGB(red, green, blue));
+			if (intersection)
+			{
+				Vector3D light_dir = closest_hit - light1.getPosition();
+
+				const Ray lightray(light1.getPosition(), light_dir / light_dir.norme());
+
+				double dist_to_light = (closest_hit - light1.getPosition()).norme() - 0.001;
+
+				bool illumined = true;
+
+				for (const Sphere& s : sphere_list)
+				{
+					std::optional<Vector3D> p_light = lightray.hit(s);
+
+					if (p_light.has_value() && (p_light.value() - light1.getPosition()).norme() <= dist_to_light)
+					{
+						illumined = false;
+					}
+				}
+
+				double dp = dotProduct(normal_at_closest_hit, lightray.getDirection());		// == cos(angle)
+				dp = std::abs(dp);
+
+				if (illumined)
+				{
+					double red = light1.getIntensity() * dp / (dist_to_light * dist_to_light);
+					double green = light1.getIntensity() * dp / (dist_to_light * dist_to_light);
+					double blue = light1.getIntensity() * dp / (dist_to_light * dist_to_light);
+
+					image.pixelColor(x, y, Magick::ColorRGB(red, green, blue));
+				}
+				
+			}
 		}
 	}
 

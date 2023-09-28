@@ -38,6 +38,28 @@ public:
 	//Friend Fonctions
 	friend double dotProduct(const Vector3D& v1, const Vector3D& v2);
 
+	template <int axis>
+	friend bool compare(const Vector3D& p1, const Vector3D& p2)
+	{
+		bool res = false;
+		switch (axis)
+		{
+		case 0:
+			res = p1.m_x < p2.m_x;
+			break;
+		case 1:
+			res = p1.m_y < p2.m_y;
+			break;
+		case 2:
+			res = p1.m_z < p2.m_z;
+			break;
+		default:
+			break;
+		}
+
+		return res;
+	}
+
 private:
 	// Members
 	double m_x;

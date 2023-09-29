@@ -3,7 +3,7 @@
 
 void test_tree()
 {
-	const int n = 1000;
+	const int n = 1000000;
 	std::vector<Vector3D> v;
 	v.reserve(n);
 
@@ -22,10 +22,7 @@ void test_tree()
 
 	std::unique_ptr<Tree> t = Tree::makeTree(v);
 
-	for (int i = 0; i < v.size(); i++)
-	{
-		const Vector3D closest = t->findClosestPoint(p);
-		std::cout << closest << std::endl;
-		std::cout << (closest - p).norme() << "\n";
-	}
+	const Vector3D closest = t->findClosestPoint(p);
+	std::cout << closest << std::endl;
+	std::cout << (closest - p).norme() << "\n";
 }

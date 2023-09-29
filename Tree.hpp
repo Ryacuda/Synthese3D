@@ -74,6 +74,8 @@ private:
 
 	Vector3D findClosestPoint(const Vector3D& p, Vector3D closest_p, double dist_to_closest)
 	{
+		std::cout << "AHAHAHAHHA" << std::endl;
+
 		double dist = (p - m_key).normeSQ();
 		if (dist < dist_to_closest)
 		{
@@ -83,7 +85,7 @@ private:
 
 		if (m_axis == 0)
 		{
-			if (p.getX() < m_key.getX() || m_left_tree)
+			if (p.getX() < m_key.getX() && m_left_tree)
 			{
 				return m_left_tree->findClosestPoint(p, closest_p, dist_to_closest);
 			}
@@ -94,7 +96,7 @@ private:
 		}
 		else if (m_axis == 1)
 		{
-			if (p.getY() < m_key.getY() || m_left_tree)
+			if (p.getY() < m_key.getY() && m_left_tree)
 			{
 				return m_left_tree->findClosestPoint(p, closest_p, dist_to_closest);
 			}
@@ -105,7 +107,7 @@ private:
 		}
 		else
 		{
-			if (p.getZ() < m_key.getZ() || m_left_tree)
+			if (p.getZ() < m_key.getZ() && m_left_tree)
 			{
 				return m_left_tree->findClosestPoint(p, closest_p, dist_to_closest);
 			}

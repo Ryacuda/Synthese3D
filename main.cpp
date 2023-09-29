@@ -46,5 +46,7 @@ int main()
 
 	//test_scene_inter_bool_bb_2();
 
+	test_tree();
+
 	return 0;
 }

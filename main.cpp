@@ -6,6 +6,7 @@
 #include "intersections.hpp"
 #include "illuminations.hpp"
 #include "Tree.hpp"
+#include "ObjectTree.hpp"
 
 #include "Magick++.h"
 
@@ -34,7 +35,7 @@ Vector3D& findClosestPoint(std::vector<Vector3D>& points, const Vector3D& p1)
 
 int main()
 {
-	Magick::InitializeMagick("C:\\Program Files\\ImageMagick-7.1.1-Q16-HDRI");
+	//Magick::InitializeMagick("C:\\Program Files\\ImageMagick-7.1.1-Q16-HDRI");
 
 	//test_scene_inter_norm_optio();
 	
@@ -46,7 +47,7 @@ int main()
 
 	//test_scene_inter_bool_bb_2();
 
-	test_tree();
+	test_tree_object();
 
 	return 0;
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include "phys.hpp"
 
 class BoundingBox
@@ -15,3 +17,5 @@ public:
 	Vector3D m_lowerbound;
 	Vector3D m_upperbound;
 };
+
+std::optional<BoundingBox> BBUnion(std::vector<BoundingBox>&& bbs);

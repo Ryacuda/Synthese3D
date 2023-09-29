@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -136,6 +136,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BoundingBox.cpp" />
+    <ClCompile Include="ObjectTree.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="illuminations.cpp" />
     <ClCompile Include="intersections.cpp" />
@@ -148,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoundingBox.hpp" />
+    <ClInclude Include="ObjectTree.hpp" />
     <ClInclude Include="Color.hpp" />
     <ClInclude Include="illuminations.hpp" />
     <ClInclude Include="intersections.hpp" />

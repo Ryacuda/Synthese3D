@@ -1,6 +1,7 @@
 #pragma once
 
 #include "phys.hpp"
+#include "BoundingBox.hpp"
 
 class Sphere
 {
@@ -15,10 +16,14 @@ public:
 	double getRadius() const;
 	void setRadius(double new_radius);
 
+	BoundingBox getBoundingBox() const;
+	void setBoundingBox(const BoundingBox& bb);
+
 	// Methods
 	Vector3D normal(Vector3D p) const;
 
 private:
 	Vector3D m_center;
 	double m_radius;
+	BoundingBox m_boundingbox;
 };

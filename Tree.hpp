@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 #include <algorithm>
+#include <random>
 
 #include "phys.hpp"
 
@@ -118,3 +119,4 @@ private:
 	}
 };
 
+void test_tree();

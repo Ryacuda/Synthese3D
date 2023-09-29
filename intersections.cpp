@@ -91,6 +91,70 @@ void test_scene_inter_bool()
 	image.write(filename);
 }
 
+void test_scene_inter_bool_bb()
+{
+	// Image
+	unsigned int image_width = 800;
+	unsigned int image_height = 600;
+	Magick::Image image(Magick::Geometry(image_width, image_height), Magick::ColorRGB(0, 0, 0));
+
+	// objects
+	Sphere sphere1(Vector3D(400, 300, 400), 100);
+
+
+	for (unsigned int x = 0; x < image_height; x++)
+	{
+		for (unsigned int y = 0; y < image_width; y++)
+		{
+			const Ray r(Vector3D(x, y, 0), Vector3D(0, 0, 1));
+
+			if (r.hitBB(sphere1))
+			{
+				image.pixelColor(x, y, Magick::ColorRGB(1, 1, 1));
+			}
+		}
+	}
+
+	std::string filename = "output/sphere_bool_bb.png";
+	image.write(filename);
+}
+
+void test_scene_inter_bool_bb_2()
+{
+	// Image
+	unsigned int image_width = 800;
+	unsigned int image_height = 600;
+	Magick::Image image(Magick::Geometry(image_width, image_height), Magick::ColorRGB(0, 0, 0));
+
+	// objects
+	Sphere sphere1(Vector3D(400, 300, 400), 100);
+
+
+	for (unsigned int x = 0; x < image_width; x++)
+	{
+		for (unsigned int y = 0; y < image_height; y++)
+		{
+			const Ray r(Vector3D(x, y, 0), Vector3D(0, 0, 1));
+
+			std::optional<Vector3D> p_i = r.hitBB(sphere1);
+			
+			double dist = 1000;
+			if (p_i.has_value())
+			{
+				dist = (p_i.value() - r.getOrigin()).norme();
+			}
+
+			if (dist >= 0)
+			{
+				image.pixelColor(x, y, Magick::ColorRGB(dist/1000, dist/1000, dist/1000));
+			}
+		}
+	}
+
+	std::string filename = "output/sphere_bool_bb_2.png";
+	image.write(filename);
+}
+
 void test_scene_inter_depth()
 {
 	// Image

@@ -11,6 +11,10 @@ double sphereIntersectsRay_depth(Sphere s, Ray r);
 
 void test_scene_inter_bool();
 
+void test_scene_inter_bool_bb();
+
+void test_scene_inter_bool_bb_2();
+
 void test_scene_inter_depth();
 
 void test_scene_inter_norm();

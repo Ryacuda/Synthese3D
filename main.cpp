@@ -32,36 +32,6 @@ Vector3D& findClosestPoint(std::vector<Vector3D>& points, const Vector3D& p1)
 	return closest;
 }
 
-void test_tree()
-{
-	const int n = 1000;
-	std::vector<Vector3D> v;
-	v.reserve(n);
-
-	std::default_random_engine generator;
-	std::uniform_real_distribution<double> distribution(0, 1);
-
-	for (int i = 0; i < n; i++)
-	{
-		v.emplace_back(distribution(generator), distribution(generator), distribution(generator));
-	}
-
-	Vector3D p(0.5, 0.5, 0.5);
-
-	Vector3D closest = findClosestPoint(v, p);
-
-	std::cout << closest << std::endl;
-
-	std::unique_ptr<Tree> t = Tree::makeTree(v);
-
-	for (int i = 0; i < v.size(); i++)
-	{
-		const Vector3D closest = t->findClosestPoint(p);
-		std::cout << closest << std::endl;
-		std::cout << (closest - p).norme() << "\n";
-	}
-}
-
 int main()
 {
 	Magick::InitializeMagick("C:\\Program Files\\ImageMagick-7.1.1-Q16-HDRI");
@@ -74,7 +44,7 @@ int main()
 
 	//illum_two();
 
-	test_tree();
+	//test_scene_inter_bool_bb_2();
 
 	return 0;
 }

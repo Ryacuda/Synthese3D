@@ -39,6 +39,12 @@
     <ClCompile Include="Sphere.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BoundingBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Color.hpp">
@@ -63,6 +69,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Tree.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingBox.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

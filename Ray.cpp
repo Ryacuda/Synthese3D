@@ -77,3 +77,70 @@ std::optional<Vector3D> Ray::hit(const Sphere& s) const
 		return {};
 	}
 }
+
+std::optional<Vector3D> Ray::hitBB(const Sphere& s) const
+{
+	BoundingBox bb = s.getBoundingBox();
+	
+	// x
+	if (m_direction.getX())
+	{
+		Vector3D p_x = m_origin + ((bb.m_lowerbound.getX() - m_origin.getX()) / m_direction.getX()) * m_direction;
+
+		if (p_x.getY() > bb.m_lowerbound.getY() && p_x.getY() < bb.m_upperbound.getY() 
+			&& p_x.getZ() > bb.m_lowerbound.getZ() && p_x.getZ() < bb.m_upperbound.getZ())
+		{
+			return p_x;
+		}
+
+		p_x = m_origin + ((bb.m_upperbound.getX() - m_origin.getX()) / m_direction.getX()) * m_direction;
+
+		if (p_x.getY() > bb.m_lowerbound.getY() && p_x.getY() < bb.m_upperbound.getY()
+			&& p_x.getZ() > bb.m_lowerbound.getZ() && p_x.getZ() < bb.m_upperbound.getZ())
+		{
+			return p_x;
+		}
+	}
+
+	// y
+	if (m_direction.getY())
+	{
+		Vector3D p_y = m_origin + ((bb.m_lowerbound.getY() - m_origin.getY()) / m_direction.getY()) * m_direction;
+
+		if (p_y.getX() > bb.m_lowerbound.getX() && p_y.getX() < bb.m_upperbound.getX()
+			&& p_y.getZ() > bb.m_lowerbound.getZ() && p_y.getZ() < bb.m_upperbound.getZ())
+		{
+			return p_y;
+		}
+
+		p_y = m_origin + ((bb.m_upperbound.getY() - m_origin.getY()) / m_direction.getY()) * m_direction;
+
+		if (p_y.getX() > bb.m_lowerbound.getX() && p_y.getX() < bb.m_upperbound.getX()
+			&& p_y.getZ() > bb.m_lowerbound.getZ() && p_y.getZ() < bb.m_upperbound.getZ())
+		{
+			return p_y;
+		}
+	}
+
+	// z
+	if (m_direction.getZ())
+	{
+		Vector3D p_z = m_origin + ((bb.m_lowerbound.getZ() - m_origin.getZ()) / m_direction.getZ()) * m_direction;
+
+		if (p_z.getX() > bb.m_lowerbound.getX() && p_z.getX() < bb.m_upperbound.getX()
+			&& p_z.getY() > bb.m_lowerbound.getY() && p_z.getY() < bb.m_upperbound.getY())
+		{
+			return p_z;
+		}
+
+		p_z = m_origin + ((bb.m_upperbound.getZ() - m_origin.getZ()) / m_direction.getZ()) * m_direction;
+
+		if (p_z.getX() > bb.m_lowerbound.getX() && p_z.getX() < bb.m_upperbound.getX()
+			&& p_z.getY() > bb.m_lowerbound.getY() && p_z.getY() < bb.m_upperbound.getY())
+		{
+			return p_z;
+		}
+	}
+	
+	return {};
+}

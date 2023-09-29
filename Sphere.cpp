@@ -2,7 +2,7 @@
 
 // Constructor
 Sphere::Sphere(Vector3D center, double radius)
-	: m_center(center), m_radius(radius)
+	: m_center(center), m_radius(radius), m_boundingbox(m_center - m_radius * Vector3D(1, 1, 1), m_center + m_radius * Vector3D(1, 1, 1))
 {
 
 }
@@ -26,6 +26,16 @@ double Sphere::getRadius() const
 void Sphere::setRadius(double new_radius)
 {
 	m_radius = new_radius;
+}
+
+BoundingBox Sphere::getBoundingBox() const
+{
+	return m_boundingbox;
+}
+
+void Sphere::setBoundingBox(const BoundingBox& bb)
+{
+	m_boundingbox = BoundingBox(bb);
 }
 
 // Methods

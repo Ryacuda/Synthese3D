@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BoundingBox.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="illuminations.cpp" />
     <ClCompile Include="intersections.cpp" />
@@ -143,8 +144,10 @@
     <ClCompile Include="phys.cpp" />
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="Sphere.cpp" />
+    <ClCompile Include="Tree.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoundingBox.hpp" />
     <ClInclude Include="Color.hpp" />
     <ClInclude Include="illuminations.hpp" />
     <ClInclude Include="intersections.hpp" />

@@ -6,6 +6,7 @@
 #include <random>
 
 #include "Sphere.hpp"
+#include "Ray.hpp"
 
 class ObjectTree
 {
@@ -20,6 +21,8 @@ public:
 	// Methods
 	static std::unique_ptr<ObjectTree> makeTree(std::vector<Sphere>& keys);
 
+	std::optional<Vector3D> findIntersection(const Ray& r);
+
 private:
 	// Attributes
 	std::unique_ptr<ObjectTree> m_left_tree;
@@ -32,6 +35,10 @@ private:
 	static std::unique_ptr<ObjectTree> makeTree(std::vector<Sphere> keys, int axis);
 
 	BoundingBox computeBB();
+
+	std::optional<Vector3D> findIntersection(const Ray& r, std::optional<Vector3D> closest_intersection, double dist_to_closest);
 };
 
 void test_tree_object();
+
+void test_inter_tree();

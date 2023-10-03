@@ -7,7 +7,7 @@ Vector3D::Vector3D(double x, double y, double z)
 }
 
 Vector3D::Vector3D(const Vector3D& v)
-	: m_x(v.m_x), m_y(v.m_y), m_z(v.m_z)
+	: m_x(v.getX()), m_y(v.getY()), m_z(v.getZ())
 {
 
 }

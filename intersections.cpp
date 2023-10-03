@@ -1,4 +1,5 @@
 #include "intersections.hpp"
+
 #include "Magick++.h"
 
 bool sphereIntersectsRay_bool(Sphere s, Ray r)
@@ -108,7 +109,7 @@ void test_scene_inter_bool_bb()
 		{
 			const Ray r(Vector3D(x, y, 0), Vector3D(0, 0, 1));
 
-			if (r.hitBB(sphere1))
+			if (r.hitBB(sphere1.getBoundingBox()))
 			{
 				image.pixelColor(x, y, Magick::ColorRGB(1, 1, 1));
 			}
@@ -136,17 +137,11 @@ void test_scene_inter_bool_bb_2()
 		{
 			const Ray r(Vector3D(x, y, 0), Vector3D(0, 0, 1));
 
-			std::optional<Vector3D> p_i = r.hitBB(sphere1);
+			std::optional<Vector3D> inter = r.hitBB(sphere1.getBoundingBox());
 			
-			double dist = 1000;
-			if (p_i.has_value())
+			if (inter.has_value())
 			{
-				dist = (p_i.value() - r.getOrigin()).norme();
-			}
-
-			if (dist >= 0)
-			{
-				image.pixelColor(x, y, Magick::ColorRGB(dist/1000, dist/1000, dist/1000));
+				image.pixelColor(x, y, Magick::ColorRGB(0.5, 0.5, 0.5));
 			}
 		}
 	}
@@ -291,4 +286,93 @@ void test_scene_inter_norm_optio()
 
 	std::string filename = "output/sphere_norm_optio.png";
 	image.write(filename);
+}
+
+
+void test_inter_benchmark_bool(int n)
+{
+	// clock
+	typedef std::chrono::high_resolution_clock myclock;
+	myclock::time_point beginning = myclock::now();
+
+	// Image
+	int image_width = 15;
+	int image_height = 10;
+	Magick::Image image(Magick::Geometry(image_width, image_height), Magick::ColorRGB(0, 0, 0));
+
+	// objects
+	std::vector<Sphere> sphere_list;
+	sphere_list.reserve(n);
+
+	std::default_random_engine generator;
+	std::uniform_real_distribution<double> coord_distrib(-500, 500);
+	std::uniform_real_distribution<double> radius_distrib(20, 50);
+
+	for (int i = 0; i < n; i++)
+	{
+		sphere_list.emplace_back(Vector3D(1000, coord_distrib(generator), coord_distrib(generator)), radius_distrib(generator));
+	}
+
+	std::unique_ptr<ObjectTree> t = ObjectTree::makeTree(sphere_list);
+
+	/* --------------------------------------------------------------------------------------------- */
+	myclock::time_point start_rendering_tree = myclock::now();
+
+	for (int x = 0; x < image_width; x++)
+	{
+		for (int y = 0; y < image_height; y++)
+		{
+			const Ray r(Vector3D(0, x - image_width/2, y - image_height/2), Vector3D(1, 0, 0));
+
+			std::optional<Vector3D> inter = t->findIntersection(r);
+
+			if (inter.has_value())
+			{
+				image.pixelColor(x, y, Magick::ColorRGB(1, 1, 1));
+			}
+		}
+	}
+
+	myclock::time_point end_tree_rendering = myclock::now();
+
+
+	std::string filename = "output/bench_tree.png";
+	image.write(filename);
+	/* --------------------------------------------------------------------------------------------- */
+
+	myclock::time_point start_rendering_vec = myclock::now();
+
+	for (int x = 0; x < image_width; x++)
+	{
+		for (int y = 0; y < image_height; y++)
+		{
+			const Ray r(Vector3D(x, y, 0), Vector3D(0, 0, 1));
+
+			bool inter = false;
+
+			for (const Sphere& s : sphere_list)
+			{
+				std::optional<Vector3D> p_i = r.hit(s);
+
+				if (p_i.has_value())
+				{
+					inter = true;
+				}
+			}
+
+			if (inter)
+			{
+				image.pixelColor(x, y, Magick::ColorRGB(1, 1, 1));
+			}
+		}
+	}
+
+	myclock::time_point end_rendering_vec = myclock::now();
+
+	filename = "output/bench_vec.png";
+	image.write(filename);
+
+	std::cout << "--------- n = " << n << " -------- - " << std::endl;
+	std::cout << "Time to render with tree : \t" << std::chrono::duration_cast< std::chrono::duration<double> >(end_tree_rendering - start_rendering_tree).count() << " seconds" << std::endl;
+	std::cout << "Time to render with vec : \t" << std::chrono::duration_cast<std::chrono::duration<double>>(end_rendering_vec - start_rendering_vec).count() << " seconds" << std::endl << std::endl;
 }

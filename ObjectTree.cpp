@@ -21,6 +21,16 @@ std::unique_ptr<ObjectTree> ObjectTree::makeTree(std::vector<Sphere>& keys)
 	return t;
 }
 
+std::optional<Vector3D> ObjectTree::findIntersection(const Ray& r)
+{
+	if (r.hitBB(m_boundingbox).has_value())
+	{
+		return findIntersection(r, {}, std::numeric_limits<double>::infinity());
+	}
+	
+	return {};
+}
+
 // Private methods
 std::unique_ptr<ObjectTree> ObjectTree::makeTree(std::vector<Sphere> keys, int axis)
 {
@@ -57,6 +67,67 @@ std::unique_ptr<ObjectTree> ObjectTree::makeTree(std::vector<Sphere> keys, int a
 
 	return std::make_unique<ObjectTree>(std::move(left_tree), std::move(right_tree), keys[middle], axis);
 }
+
+
+std::optional<Vector3D> ObjectTree::findIntersection(const Ray& r, std::optional<Vector3D> closest_intersection, double dist_to_closest)
+{
+	// check intersection with the object
+	std::optional<Vector3D> p_i = r.hit(m_key);
+	if (p_i.has_value())
+	{
+		double dist = (p_i.value() - r.getOrigin()).norme();
+
+		if (dist < dist_to_closest)
+		{
+			closest_intersection = p_i;
+			dist_to_closest = dist;
+		}
+	}
+	
+	if (m_left_tree)
+	{
+		std::optional<Vector3D> hit_left = r.hitBB(m_left_tree->getBoundingbox());
+		if (hit_left.has_value() && ((hit_left.value() - r.getOrigin()).norme() < dist_to_closest))
+		{
+			std::optional<Vector3D> p_i_left = m_left_tree->findIntersection(r, closest_intersection, dist_to_closest);
+
+			if (p_i_left.has_value())
+			{
+				double dist = (p_i_left.value() - r.getOrigin()).norme();
+
+				if (dist < dist_to_closest)
+				{
+					closest_intersection = p_i_left;
+					dist_to_closest = dist;
+				}
+			}
+		}
+	}
+	
+	if(m_right_tree)
+	{
+		std::optional<Vector3D> hit_right = r.hitBB(m_right_tree->getBoundingbox());
+		if (hit_right.has_value() && ((hit_right.value() - r.getOrigin()).norme() < dist_to_closest))
+		{
+			std::optional<Vector3D> p_i_right = m_right_tree->findIntersection(r, closest_intersection, dist_to_closest);
+
+			if (p_i_right.has_value())
+			{
+				double dist = (p_i_right.value() - r.getOrigin()).norme();
+
+				if (dist < dist_to_closest)
+				{
+					closest_intersection = p_i_right;
+					dist_to_closest = dist;
+				}
+			}
+		}
+	}
+
+	return closest_intersection;
+}
+
+
 
 BoundingBox ObjectTree::computeBB()
 {
@@ -111,4 +182,31 @@ void test_tree_object()
 
 	//std::cout << closest << std::endl;
 	//std::cout << (closest - p).norme() << "\n";
+}
+
+
+void test_inter_tree()
+{
+	const int n = 10;
+	std::vector<Sphere> v;
+	v.reserve(n);
+
+	std::default_random_engine generator;
+	std::uniform_real_distribution<double> coord_distrib(-1000, 1000);
+	std::uniform_real_distribution<double> radius_distrib(20, 60);
+
+	for (int i = 0; i < n; i++)
+	{
+		v.emplace_back(Vector3D(1000, coord_distrib(generator), coord_distrib(generator)), radius_distrib(generator));
+	}
+
+	v.emplace_back(Vector3D(1000, 80, 80), 100);
+
+	std::unique_ptr<ObjectTree> t = ObjectTree::makeTree(v);
+
+	const Ray r(Vector3D(0, 0, 0), Vector3D(1, 0, 0));
+
+	std::optional<Vector3D> inter = t->findIntersection(r);
+
+	std::cout << "azhahah " << inter.has_value() << std::endl;
 }

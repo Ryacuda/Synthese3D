@@ -19,3 +19,4 @@ public:
 };
 
 std::optional<BoundingBox> BBUnion(std::vector<BoundingBox>&& bbs);
+

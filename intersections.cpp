@@ -109,7 +109,9 @@ void test_scene_inter_bool_bb()
 		{
 			const Ray r(Vector3D(x, y, 0), Vector3D(0, 0, 1));
 
-			if (r.hitBB(sphere1.getBoundingBox()))
+			std::optional<double> t = r.hitBB(sphere1.getBoundingBox());
+
+			if (t.has_value() && t.value() >= 0)
 			{
 				image.pixelColor(x, y, Magick::ColorRGB(1, 1, 1));
 			}
@@ -137,9 +139,9 @@ void test_scene_inter_bool_bb_2()
 		{
 			const Ray r(Vector3D(x, y, 0), Vector3D(0, 0, 1));
 
-			std::optional<Vector3D> inter = r.hitBB(sphere1.getBoundingBox());
+			std::optional<double> t = r.hitBB(sphere1.getBoundingBox());
 			
-			if (inter.has_value())
+			if (t.has_value() && t.value() >= 0)
 			{
 				image.pixelColor(x, y, Magick::ColorRGB(0.5, 0.5, 0.5));
 			}
@@ -353,7 +355,7 @@ void test_inter_benchmark_bool(int n)
 	// Image
 	int image_width = 16;
 	int image_height = 9;
-	//Magick::Image image(Magick::Geometry(image_width, image_height), Magick::ColorRGB(0, 0, 0));
+	Magick::Image image(Magick::Geometry(image_width, image_height), Magick::ColorRGB(0, 0, 0));
 
 	// objects
 	std::vector<Sphere> sphere_list;
@@ -383,7 +385,7 @@ void test_inter_benchmark_bool(int n)
 
 			if (inter.has_value())
 			{
-				//image.pixelColor(x, y, Magick::ColorRGB(1, 1, 1));
+				image.pixelColor(x, y, Magick::ColorRGB(1, 1, 1));
 			}
 		}
 	}
@@ -392,7 +394,7 @@ void test_inter_benchmark_bool(int n)
 
 
 	std::string filename = "output/bench_tree.png";
-	//image.write(filename);
+	image.write(filename);
 	/* --------------------------------------------------------------------------------------------- */
 
 	myclock::time_point start_rendering_vec = myclock::now();
@@ -411,13 +413,13 @@ void test_inter_benchmark_bool(int n)
 
 				if (p_i.has_value())
 				{
-					//inter = true;
+					inter = true;
 				}
 			}
 
 			if (inter)
 			{
-				//image.pixelColor(x, y, Magick::ColorRGB(1, 1, 1));
+				image.pixelColor(x, y, Magick::ColorRGB(1, 1, 1));
 			}
 		}
 	}
@@ -425,7 +427,7 @@ void test_inter_benchmark_bool(int n)
 	myclock::time_point end_rendering_vec = myclock::now();
 
 	filename = "output/bench_vec.png";
-	//image.write(filename);
+	image.write(filename);
 
 	std::cout << "--------- n = " << n << " -------- - " << std::endl;
 	std::cout << "Time to render with tree : \t" << std::chrono::duration_cast< std::chrono::duration<double> >(end_tree_rendering - start_rendering_tree).count() << " seconds" << std::endl;
@@ -440,9 +442,9 @@ void test_inter_benchmark_regular(int n, int m)
 	myclock::time_point beginning = myclock::now();
 
 	// Image
-	int image_width = 800;
-	int image_height = 600;
-	//Magick::Image image(Magick::Geometry(image_width, image_height), Magick::ColorRGB(0, 0, 0));
+	int image_width = 16;
+	int image_height = 9;
+	Magick::Image image(Magick::Geometry(image_width, image_height), Magick::ColorRGB(0, 0, 0));
 
 	// objects
 	std::vector<Sphere> sphere_list;
@@ -478,7 +480,7 @@ void test_inter_benchmark_regular(int n, int m)
 
 			if (inter.has_value())
 			{
-				//image.pixelColor(x, y, Magick::ColorRGB(1, 1, 1));
+				image.pixelColor(x, y, Magick::ColorRGB(1, 1, 1));
 			}
 		}
 	}
@@ -487,7 +489,7 @@ void test_inter_benchmark_regular(int n, int m)
 
 
 	std::string filename = "output/bench_tree_reg.png";
-	//image.write(filename);
+	image.write(filename);
 	/* --------------------------------------------------------------------------------------------- */
 
 	myclock::time_point start_rendering_vec = myclock::now();
@@ -506,13 +508,13 @@ void test_inter_benchmark_regular(int n, int m)
 
 				if (p_i.has_value())
 				{
-					//inter = true;
+					inter = true;
 				}
 			}
 
 			if (inter)
 			{
-				//image.pixelColor(x, y, Magick::ColorRGB(1, 1, 1));
+				image.pixelColor(x, y, Magick::ColorRGB(1, 1, 1));
 			}
 		}
 	}
@@ -520,7 +522,7 @@ void test_inter_benchmark_regular(int n, int m)
 	myclock::time_point end_rendering_vec = myclock::now();
 
 	filename = "output/bench_vec_reg.png";
-	//image.write(filename);
+	image.write(filename);
 
 	std::cout << "--------- n = " << n*m << " ---------- " << std::endl;
 	std::cout << "Time to render with tree : \t" << std::chrono::duration_cast<std::chrono::duration<double>>(end_tree_rendering - start_rendering_tree).count() << " seconds" << std::endl;

@@ -43,6 +43,7 @@ void ObjectTree::displayBBVolumes()
 {
 	std::cout << "--------------------" << std::endl;
 	std::cout << "Boundingbox vol : \t" << m_boundingbox.volume() << std::endl;
+
 	std::cout << "left BB vol : \t" << (m_left_tree ? m_left_tree->getBoundingbox().volume() : 0) << std::endl;
 	std::cout << "right BB vol : \t" << (m_right_tree ? m_right_tree->getBoundingbox().volume() : 0) << std::endl << std::endl;
 
@@ -112,8 +113,8 @@ std::optional<Vector3D> ObjectTree::findIntersection(const Ray& r, std::optional
 	
 	if (m_left_tree)
 	{
-		std::optional<Vector3D> hit_left = r.hitBB(m_left_tree->getBoundingbox());
-		if (hit_left.has_value() && ((hit_left.value() - r.getOrigin()).norme() < dist_to_closest))
+		std::optional<double> t = r.hitBB(m_left_tree->getBoundingbox());
+		if (t.has_value() && (t.value() < dist_to_closest) && t.value() >= 0)
 		{
 			std::optional<Vector3D> p_i_left = m_left_tree->findIntersection(r, closest_intersection, dist_to_closest);
 
@@ -132,8 +133,8 @@ std::optional<Vector3D> ObjectTree::findIntersection(const Ray& r, std::optional
 	
 	if(m_right_tree)
 	{
-		std::optional<Vector3D> hit_right = r.hitBB(m_right_tree->getBoundingbox());
-		if (hit_right.has_value() && ((hit_right.value() - r.getOrigin()).norme() < dist_to_closest))
+		std::optional<double> t = r.hitBB(m_right_tree->getBoundingbox());
+		if (t.has_value() && t.value() < dist_to_closest && t.value() >= 0)
 		{
 			std::optional<Vector3D> p_i_right = m_right_tree->findIntersection(r, closest_intersection, dist_to_closest);
 

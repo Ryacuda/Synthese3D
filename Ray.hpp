@@ -20,7 +20,7 @@ public:
 
 	// Methods
 	std::optional<Vector3D> hit(const Sphere& s) const;
-	std::optional<Vector3D> hitBB(const BoundingBox& bb) const;
+	std::optional<double> hitBB(const BoundingBox& bb) const;
 
 private:
 	Vector3D m_origin;

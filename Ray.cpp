@@ -78,10 +78,9 @@ std::optional<Vector3D> Ray::hit(const Sphere& s) const
 	}
 }
 
-std::optional<Vector3D> Ray::hitBB(const BoundingBox& bb) const
+std::optional<double> Ray::hitBB(const BoundingBox& bb) const
 {
-	Vector3D intersection(0, 0, 0);
-	double dist = std::numeric_limits<double>::infinity();
+	double dist_min = std::numeric_limits<double>::infinity();
 
 	if (m_direction.getX())
 	{
@@ -91,10 +90,9 @@ std::optional<Vector3D> Ray::hitBB(const BoundingBox& bb) const
 			&& p_x.getZ() > bb.m_lowerbound.getZ() && p_x.getZ() < bb.m_upperbound.getZ())
 		{
 			double x_dist = (p_x - m_origin).normeSQ();
-			if (x_dist < dist)
+			if (x_dist < dist_min)
 			{
-				intersection = p_x;
-				dist = x_dist;
+				dist_min = x_dist;
 			}
 		}
 
@@ -104,10 +102,9 @@ std::optional<Vector3D> Ray::hitBB(const BoundingBox& bb) const
 			&& p_x.getZ() > bb.m_lowerbound.getZ() && p_x.getZ() < bb.m_upperbound.getZ())
 		{
 			double x_dist = (p_x - m_origin).normeSQ();
-			if (x_dist < dist)
+			if (x_dist < dist_min)
 			{
-				intersection = p_x;
-				dist = x_dist;
+				dist_min = x_dist;
 			}
 		}
 	}
@@ -121,10 +118,9 @@ std::optional<Vector3D> Ray::hitBB(const BoundingBox& bb) const
 			&& p_y.getZ() > bb.m_lowerbound.getZ() && p_y.getZ() < bb.m_upperbound.getZ())
 		{
 			double y_dist = (p_y - m_origin).normeSQ();
-			if (y_dist < dist)
+			if (y_dist < dist_min)
 			{
-				intersection = p_y;
-				dist = y_dist;
+				dist_min = y_dist;
 			}
 		}
 
@@ -134,10 +130,9 @@ std::optional<Vector3D> Ray::hitBB(const BoundingBox& bb) const
 			&& p_y.getZ() > bb.m_lowerbound.getZ() && p_y.getZ() < bb.m_upperbound.getZ())
 		{
 			double y_dist = (p_y - m_origin).normeSQ();
-			if (y_dist < dist)
+			if (y_dist < dist_min)
 			{
-				intersection = p_y;
-				dist = y_dist;
+				dist_min = y_dist;
 			}
 		}
 	}
@@ -151,10 +146,9 @@ std::optional<Vector3D> Ray::hitBB(const BoundingBox& bb) const
 			&& p_z.getY() > bb.m_lowerbound.getY() && p_z.getY() < bb.m_upperbound.getY())
 		{
 			double z_dist = (p_z - m_origin).normeSQ();
-			if (z_dist < dist)
+			if (z_dist < dist_min)
 			{
-				intersection = p_z;
-				dist = z_dist;
+				dist_min = z_dist;
 			}
 		}
 
@@ -164,15 +158,21 @@ std::optional<Vector3D> Ray::hitBB(const BoundingBox& bb) const
 			&& p_z.getY() > bb.m_lowerbound.getY() && p_z.getY() < bb.m_upperbound.getY())
 		{
 			double z_dist = (p_z - m_origin).normeSQ();
-			if (z_dist < dist)
+			if (z_dist < dist_min)
 			{
-				intersection = p_z;
-				dist = z_dist;
+				dist_min = z_dist;
 			}
 		}
 	}
 
-	return intersection;
+	if (dist_min < std::numeric_limits<double>::infinity())
+	{
+		return dist_min;
+	}
+	else
+	{
+		return {};
+	}
 }
 
 // Functions
@@ -183,21 +183,16 @@ void test_bb()
 	Ray r1(Vector3D(2, 0, 0), Vector3D(1, 0, 0));
 	Ray r2(Vector3D(2, 0, 0), Vector3D(-1, 0, 0));
 
-	std::optional<Vector3D> r1_hit = r1.hitBB(bb);
-	std::optional<Vector3D> r2_hit = r2.hitBB(bb);
+	std::optional<double> r1_t = r1.hitBB(bb);
+	std::optional<double> r2_t = r2.hitBB(bb);
 
-	if (r1_hit || !r2_hit)
+	if (r1_t.has_value())
 	{
-		std::cout << "TEST FAILED" << std::endl;
+		std::cout << "r1 : " << (r1_t.value() > 0) << " should be 0" << std::endl;
 	}
 
-	if (r1_hit.has_value())
+	if (r2_t.has_value())
 	{
-		std::cout << "r1 : " << (dotProduct(r1_hit.value() - r1.getOrigin(), r1.getDirection()) > 0) << " should be 0" << std::endl;
-	}
-
-	if (r1_hit.has_value())
-	{
-		std::cout << "r2 : " << (dotProduct(r2_hit.value() - r2.getOrigin(), r2.getDirection()) > 0) << " should be 1" << std::endl;
+		std::cout << "r2 : " << (r2_t.value() > 0) << " should be 1" << std::endl;
 	}
 }

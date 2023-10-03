@@ -12,7 +12,7 @@
 
 int main()
 {
-	//Magick::InitializeMagick("C:\\Program Files\\ImageMagick-7.1.1-Q16-HDRI");
+	Magick::InitializeMagick("C:\\Program Files\\ImageMagick-7.1.1-Q16-HDRI");
 
 	//test_scene_inter_norm_optio();
 	
@@ -26,7 +26,14 @@ int main()
 
 	//test_tree_object();
 
-	test_inter_benchmark_regular(50,50);
+	//test_inter_benchmark_regular(16,16);
+
+	test_inter_benchmark_bool(1);
+	test_inter_benchmark_bool(10);
+	test_inter_benchmark_bool(100);
+	test_inter_benchmark_bool(1000);
+	test_inter_benchmark_bool(10000);
+	test_inter_benchmark_bool(100000);
 
 	//tree_metrics(100);
 

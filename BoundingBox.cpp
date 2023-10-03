@@ -15,6 +15,11 @@ bool BoundingBox::inside(const Vector3D& p)
 		&& p.getZ() > m_lowerbound.getZ() && p.getZ() < m_upperbound.getZ();
 }
 
+double BoundingBox::volume()
+{
+	return (m_upperbound.getX() - m_lowerbound.getX()) * (m_upperbound.getY() - m_lowerbound.getY()) * (m_upperbound.getZ() - m_lowerbound.getZ());
+}
+
 // Fonctions
 
 std::optional<BoundingBox> BBUnion(std::vector<BoundingBox>&& bbs)

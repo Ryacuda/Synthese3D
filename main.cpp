@@ -26,14 +26,7 @@ int main()
 
 	//test_tree_object();
 
-	test_inter_benchmark_bool(10);
-	test_inter_benchmark_bool(100);
-	test_inter_benchmark_bool(1000);
-	test_inter_benchmark_bool(10000);
-	test_inter_benchmark_bool(100000);
-	test_inter_benchmark_bool(1000000);
-	test_inter_benchmark_bool(10000000);
-	test_inter_benchmark_bool(100000000);
+	tree_metrics(3);
 
 	return 0;
 }

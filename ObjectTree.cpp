@@ -31,6 +31,32 @@ std::optional<Vector3D> ObjectTree::findIntersection(const Ray& r)
 	return {};
 }
 
+int ObjectTree::depth()
+{
+	int depth_left = (m_left_tree ? m_left_tree->depth() : 0);
+	int depth_right = (m_right_tree ? m_right_tree->depth() : 0);
+
+	return 1 + std::max(depth_left, depth_right);
+}
+
+void ObjectTree::displayBBVolumes()
+{
+	std::cout << "--------------------" << std::endl;
+	std::cout << "Boundingbox vol : \t" << m_boundingbox.volume() << std::endl;
+	std::cout << "left BB vol : \t" << (m_left_tree ? m_left_tree->getBoundingbox().volume() : 0) << std::endl;
+	std::cout << "right BB vol : \t" << (m_right_tree ? m_right_tree->getBoundingbox().volume() : 0) << std::endl << std::endl;
+
+	if (m_left_tree)
+	{
+		m_left_tree->displayBBVolumes();
+	}
+
+	if (m_right_tree)
+	{
+		m_right_tree->displayBBVolumes();
+	}
+}
+
 // Private methods
 std::unique_ptr<ObjectTree> ObjectTree::makeTree(std::vector<Sphere> keys, int axis)
 {
@@ -208,5 +234,28 @@ void test_inter_tree()
 
 	std::optional<Vector3D> inter = t->findIntersection(r);
 
-	std::cout << "azhahah " << inter.has_value() << std::endl;
+	std::cout << inter.has_value() << std::endl;
+}
+
+void tree_metrics(int n)
+{
+	std::vector<Sphere> v;
+	v.reserve(n);
+
+	std::default_random_engine generator;
+	std::uniform_real_distribution<double> coord_distrib(-1000, 1000);
+	std::uniform_real_distribution<double> radius_distrib(20, 60);
+
+	for (int i = 0; i < n; i++)
+	{
+		v.emplace_back(Vector3D(1000, coord_distrib(generator), coord_distrib(generator)), radius_distrib(generator));
+	}
+
+	v.emplace_back(Vector3D(1000, 80, 80), 100);
+
+	std::unique_ptr<ObjectTree> t = ObjectTree::makeTree(v);
+
+	std::cout << "depth " << t->depth() << std::endl;
+
+	t->displayBBVolumes();
 }

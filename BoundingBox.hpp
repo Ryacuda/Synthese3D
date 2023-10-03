@@ -13,6 +13,8 @@ public:
 	// Methods
 	bool inside(const Vector3D& p);
 
+	double volume();
+
 	// Attributes
 	Vector3D m_lowerbound;
 	Vector3D m_upperbound;

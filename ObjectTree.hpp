@@ -23,6 +23,10 @@ public:
 
 	std::optional<Vector3D> findIntersection(const Ray& r);
 
+	int depth();
+
+	void displayBBVolumes();
+
 private:
 	// Attributes
 	std::unique_ptr<ObjectTree> m_left_tree;
@@ -42,3 +46,5 @@ private:
 void test_tree_object();
 
 void test_inter_tree();
+
+void tree_metrics(int n);

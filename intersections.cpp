@@ -431,3 +431,98 @@ void test_inter_benchmark_bool(int n)
 	std::cout << "Time to render with tree : \t" << std::chrono::duration_cast< std::chrono::duration<double> >(end_tree_rendering - start_rendering_tree).count() << " seconds" << std::endl;
 	std::cout << "Time to render with vec : \t" << std::chrono::duration_cast<std::chrono::duration<double>>(end_rendering_vec - start_rendering_vec).count() << " seconds" << std::endl << std::endl;
 }
+
+
+void test_inter_benchmark_regular(int n, int m)
+{
+	// clock
+	typedef std::chrono::high_resolution_clock myclock;
+	myclock::time_point beginning = myclock::now();
+
+	// Image
+	int image_width = 800;
+	int image_height = 600;
+	//Magick::Image image(Magick::Geometry(image_width, image_height), Magick::ColorRGB(0, 0, 0));
+
+	// objects
+	std::vector<Sphere> sphere_list;
+	sphere_list.reserve(n*m);
+
+	std::default_random_engine generator;
+	std::uniform_real_distribution<double> coord_distrib(-500, 500);
+	std::uniform_real_distribution<double> radius_distrib(20, 50);
+
+	double sphere_radius = std::min(image_width / (n * 2), image_height / (m * 2));
+	double density = 3;		// inverse of density :)
+
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			sphere_list.emplace_back(Vector3D(1000, sphere_radius * density * i, sphere_radius * density * j), sphere_radius);
+		}
+	}
+
+	std::unique_ptr<ObjectTree> t = ObjectTree::makeTree(sphere_list);
+
+	/* --------------------------------------------------------------------------------------------- */
+	myclock::time_point start_rendering_tree = myclock::now();
+
+	for (int x = 0; x < image_width; x++)
+	{
+		for (int y = 0; y < image_height; y++)
+		{
+			const Ray r(Vector3D(0, x, y), Vector3D(1, 0, 0));
+
+			std::optional<Vector3D> inter = t->findIntersection(r);
+
+			if (inter.has_value())
+			{
+				//image.pixelColor(x, y, Magick::ColorRGB(1, 1, 1));
+			}
+		}
+	}
+
+	myclock::time_point end_tree_rendering = myclock::now();
+
+
+	std::string filename = "output/bench_tree_reg.png";
+	//image.write(filename);
+	/* --------------------------------------------------------------------------------------------- */
+
+	myclock::time_point start_rendering_vec = myclock::now();
+
+	for (int x = 0; x < image_width; x++)
+	{
+		for (int y = 0; y < image_height; y++)
+		{
+			const Ray r(Vector3D(0, x, y), Vector3D(1, 0, 0));
+
+			bool inter = false;
+
+			for (const Sphere& s : sphere_list)
+			{
+				std::optional<Vector3D> p_i = r.hit(s);
+
+				if (p_i.has_value())
+				{
+					//inter = true;
+				}
+			}
+
+			if (inter)
+			{
+				//image.pixelColor(x, y, Magick::ColorRGB(1, 1, 1));
+			}
+		}
+	}
+
+	myclock::time_point end_rendering_vec = myclock::now();
+
+	filename = "output/bench_vec_reg.png";
+	//image.write(filename);
+
+	std::cout << "--------- n = " << n*m << " ---------- " << std::endl;
+	std::cout << "Time to render with tree : \t" << std::chrono::duration_cast<std::chrono::duration<double>>(end_tree_rendering - start_rendering_tree).count() << " seconds" << std::endl;
+	std::cout << "Time to render with vec : \t" << std::chrono::duration_cast<std::chrono::duration<double>>(end_rendering_vec - start_rendering_vec).count() << " seconds" << std::endl << std::endl;
+}

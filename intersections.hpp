@@ -26,3 +26,5 @@ void test_scene_inter_norm_optio();
 void test_inter_tree_bool(int n);
 
 void test_inter_benchmark_bool(int n);
+
+void test_inter_benchmark_regular(int n, int m);

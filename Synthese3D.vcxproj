@@ -138,6 +138,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BoundingBox.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="ObjectTree.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="illuminations.cpp" />
@@ -151,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoundingBox.hpp" />
+    <ClInclude Include="Material.hpp" />
     <ClInclude Include="ObjectTree.hpp" />
     <ClInclude Include="Color.hpp" />
     <ClInclude Include="illuminations.hpp" />

@@ -1,7 +1,7 @@
 #include "ObjectTree.hpp"
 
 // Constructors
-ObjectTree::ObjectTree(std::unique_ptr<ObjectTree> left, std::unique_ptr<ObjectTree> right, Sphere key, int axis)
+ObjectTree::ObjectTree(std::unique_ptr<ObjectTree> left, std::unique_ptr<ObjectTree> right, const Sphere& key, int axis)
 	: m_left_tree(std::move(left)), m_right_tree(std::move(right)), m_key(key), m_axis(axis), m_boundingbox(Vector3D(0,0,0), Vector3D(0,0,0))
 {
 

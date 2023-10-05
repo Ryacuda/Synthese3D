@@ -14,7 +14,7 @@ class ObjectTree
 public:
 
 	// Constructors
-	ObjectTree(std::unique_ptr<ObjectTree> left, std::unique_ptr<ObjectTree> right, Sphere key, int axis);
+	ObjectTree(std::unique_ptr<ObjectTree> left, std::unique_ptr<ObjectTree> right, const Sphere& key, int axis);
 
 	// Accessors
 	BoundingBox getBoundingbox();

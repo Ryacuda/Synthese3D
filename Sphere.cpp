@@ -2,7 +2,8 @@
 
 // Constructor
 Sphere::Sphere(Vector3D center, double radius)
-	: m_center(center), m_radius(radius), m_boundingbox(m_center - m_radius * Vector3D(1, 1, 1), m_center + m_radius * Vector3D(1, 1, 1))
+	: m_center(center), m_radius(radius),
+	m_boundingbox(m_center - m_radius * Vector3D(1, 1, 1), m_center + m_radius * Vector3D(1, 1, 1))
 {
 
 }

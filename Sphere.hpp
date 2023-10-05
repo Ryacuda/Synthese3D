@@ -2,6 +2,7 @@
 
 #include "phys.hpp"
 #include "BoundingBox.hpp"
+#include "Material.hpp"
 
 class Sphere
 {

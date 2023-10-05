@@ -63,6 +63,9 @@
     <ClCompile Include="intersections.cpp">
       <Filter>Source Files\Fonctions</Filter>
     </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Color.hpp">
@@ -94,6 +97,9 @@
     </ClInclude>
     <ClInclude Include="ObjectTree.hpp">
       <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

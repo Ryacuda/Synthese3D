@@ -2,7 +2,7 @@
 
 #include "Magick++.h"
 
-bool sphereIntersectsRay_bool(Sphere s, Ray r)
+bool sphereIntersectsRay_bool(const Sphere& s, Ray r)
 {
 	double a = r.getDirection().normeSQ();
 	double b = 2 * dotProduct(r.getDirection(), r.getOrigin() - s.getCenter());
@@ -25,7 +25,7 @@ bool sphereIntersectsRay_bool(Sphere s, Ray r)
 	return false;
 }
 
-double sphereIntersectsRay_depth(Sphere s, Ray r)
+double sphereIntersectsRay_depth(const Sphere& s, Ray r)
 {
 	double a = r.getDirection().normeSQ();
 	double b = 2 * dotProduct(r.getDirection(), r.getOrigin() - s.getCenter());
@@ -545,10 +545,10 @@ void test_tree_lights(int n)
 	std::uniform_real_distribution<double> radius_distrib(20, 50);
 	std::uniform_real_distribution<double> color_distrib(0.5, 1);
 
-
 	for (int i = 0; i < n; i++)
 	{
-		sphere_list.emplace_back(Vector3D(coord_x_distrib(generator), coord_yz_distrib(generator), coord_yz_distrib(generator)), radius_distrib(generator));
+		sphere_list.emplace_back(Vector3D(coord_x_distrib(generator), coord_yz_distrib(generator), coord_yz_distrib(generator)),
+								 radius_distrib(generator));
 	}
 
 

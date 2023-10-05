@@ -8,9 +8,9 @@
 #include "ObjectTree.hpp"
 #include "Light.hpp"
 
-bool sphereIntersectsRay_bool(Sphere s, Ray r);
+bool sphereIntersectsRay_bool(const Sphere& s, Ray r);
 
-double sphereIntersectsRay_depth(Sphere s, Ray r);
+double sphereIntersectsRay_depth(const Sphere& s, Ray r);
 
 void test_scene_inter_bool();
 

@@ -18,21 +18,23 @@ void illum_zero()
 		{
 			const Ray r(Vector3D(x, y, 0), Vector3D(0, 0, 1));
 
-			std::optional<Vector3D> p_i = r.hit(sphere1);
+			std::optional<double> t = r.hit(sphere1);
 
-			if (p_i.has_value())
+			if (t.has_value())
 			{
-				Vector3D light_dir = p_i.value() - light1.getPosition();
+				Vector3D inter = (t.value() * r.getDirection() + r.getOrigin());
+
+				Vector3D light_dir = inter - light1.getPosition();
 
 				const Ray lightray(light1.getPosition(), light_dir/light_dir.norme());
 
-				double dist_to_light = (p_i.value() - light1.getPosition()).norme() -0.001;
+				double dist_to_light = (inter - light1.getPosition()).norme() -0.001;
 
-				std::optional<Vector3D> p_light = lightray.hit(sphere1);
+				std::optional<double> t_light = lightray.hit(sphere1);
 
-				if (p_light.has_value() && (p_light.value() - light1.getPosition()).norme() >= dist_to_light)
+				if (t_light.has_value() && t_light.value() >= dist_to_light)
 				{
-					Vector3D norm = sphere1.normal(p_i.value());
+					Vector3D norm = sphere1.normal(inter);
 
 					double dp = dotProduct(norm, lightray.getDirection());		// == cos(angle)
 
@@ -76,27 +78,29 @@ void illum_one()
 		{
 			const Ray r(Vector3D(x, y, 0), Vector3D(0, 0, 1));
 
-			std::optional<Vector3D> p_i = r.hit(sphere1);
+			std::optional<double> t = r.hit(sphere1);
 			double dist = -1;
 
-			if (p_i.has_value())
+			if (t.has_value())
 			{
+				Vector3D inter = (t.value() * r.getDirection() + r.getOrigin());
+
 				double r = 0;
 				double g = 0;
 				double b = 0;
 
 				for (const Light& light : light_vec)
 				{
-					Vector3D light_dir = p_i.value() - light.getPosition();
+					Vector3D light_dir = inter - light.getPosition();
 					const Ray lightray(light.getPosition(), light_dir / light_dir.norme());
 
-					double dist_to_light = (p_i.value() - light.getPosition()).norme() - 0.001;
+					double dist_to_light = t.value() - 0.001;
 
-					std::optional<Vector3D> p_light = lightray.hit(sphere1);
+					std::optional<double> t_light = lightray.hit(sphere1);
 
-					if (p_light.has_value() && (p_light.value() - light.getPosition()).norme() >= dist_to_light)
+					if (t_light.has_value() && t_light.value() >= dist_to_light)
 					{
-						Vector3D norm = sphere1.normal(p_i.value());
+						Vector3D norm = sphere1.normal(inter);
 
 						double dp = dotProduct(norm, lightray.getDirection());		// == cos(angle)
 						dp = std::abs(dp);
@@ -139,25 +143,22 @@ void illum_two()
 			const Ray r(Vector3D(x, y, 0), Vector3D(0, 0, 1));
 
 			Vector3D closest_hit(0, 0, 0);
-			double squared_dist_to_closest_hit = std::numeric_limits<double>::infinity();
+			double dist_to_closest_hit = std::numeric_limits<double>::infinity();
 			Vector3D normal_at_closest_hit(0, 0, 0);
 			bool intersection = false;
 
 			for (const Sphere& s : sphere_list)
 			{
-				std::optional<Vector3D> p_i = r.hit(s);
+				std::optional<double> t = r.hit(s);
 
-				if (p_i.has_value())
+				if (t.has_value() && t.value() < dist_to_closest_hit && t.value() >= 0)
 				{
-					double squared_dist = (r.getOrigin() - p_i.value()).normeSQ();
+					Vector3D inter = (t.value() * r.getDirection() + r.getOrigin());
 
-					if (squared_dist < squared_dist_to_closest_hit)
-					{
-						closest_hit = p_i.value();
-						normal_at_closest_hit = s.normal(p_i.value());
-						squared_dist_to_closest_hit = squared_dist;
-						intersection = true;
-					}
+					closest_hit = inter;
+					normal_at_closest_hit = s.normal(inter);
+					dist_to_closest_hit = t.value();
+					intersection = true;
 				}
 			}
 
@@ -173,9 +174,9 @@ void illum_two()
 
 				for (const Sphere& s : sphere_list)
 				{
-					std::optional<Vector3D> p_light = lightray.hit(s);
+					std::optional<double> t_light = lightray.hit(s);
 
-					if (p_light.has_value() && (p_light.value() - light1.getPosition()).norme() <= dist_to_light)
+					if (t_light.has_value() && t_light.value() <= dist_to_light && t_light >= 0)
 					{
 						illumined = false;
 					}

@@ -28,14 +28,13 @@ int main()
 
 	//test_inter_benchmark_regular(16,16);
 
-	test_inter_benchmark_bool(1);
-	test_inter_benchmark_bool(10);
-	test_inter_benchmark_bool(100);
-	test_inter_benchmark_bool(1000);
-	test_inter_benchmark_bool(10000);
-	test_inter_benchmark_bool(100000);
+	//test_inter_benchmark_bool(10);
+	
+	//test_inter_benchmark_regular(50, 50);
 
 	//tree_metrics(100);
+
+	test_tree_lights(100);
 
 	return 0;
 }

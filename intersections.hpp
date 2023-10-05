@@ -6,6 +6,7 @@
 #include "Sphere.hpp"
 #include "Ray.hpp"
 #include "ObjectTree.hpp"
+#include "Light.hpp"
 
 bool sphereIntersectsRay_bool(Sphere s, Ray r);
 
@@ -27,4 +28,6 @@ void test_inter_tree_bool(int n);
 
 void test_inter_benchmark_bool(int n);
 
-void test_inter_benchmark_regular(int n, int m);
+void test_inter_benchmark_regular(std::size_t n, std::size_t m);
+
+void test_tree_lights(int n);

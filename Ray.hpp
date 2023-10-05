@@ -19,7 +19,7 @@ public:
 	void setDirection(const Vector3D& new_direction);
 
 	// Methods
-	std::optional<Vector3D> hit(const Sphere& s) const;
+	std::optional<double> hit(const Sphere& s) const;
 	std::optional<double> hitBB(const BoundingBox& bb) const;
 
 private:

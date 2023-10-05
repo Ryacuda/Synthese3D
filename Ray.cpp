@@ -31,9 +31,9 @@ void Ray::setDirection(const Vector3D& new_direction)
 }
 
 // Methods
-std::optional<Vector3D> Ray::hit(const Sphere& s) const
+std::optional<double> Ray::hit(const Sphere& s) const
 {
-	double t = -std::numeric_limits<double>::infinity();
+	std::optional<double> t = {};
 
 	double a = m_direction.normeSQ();
 	double b = 2 * dotProduct(m_direction, m_origin - s.getCenter());
@@ -67,15 +67,7 @@ std::optional<Vector3D> Ray::hit(const Sphere& s) const
 		}
 	}
 
-	// t may be < 0
-	if (t > 0)
-	{
-		return t * m_direction + m_origin;
-	}
-	else
-	{
-		return {};
-	}
+	return t;
 }
 
 std::optional<double> Ray::hitBB(const BoundingBox& bb) const
@@ -89,7 +81,7 @@ std::optional<double> Ray::hitBB(const BoundingBox& bb) const
 		if (p_x.getY() > bb.m_lowerbound.getY() && p_x.getY() < bb.m_upperbound.getY()
 			&& p_x.getZ() > bb.m_lowerbound.getZ() && p_x.getZ() < bb.m_upperbound.getZ())
 		{
-			double x_dist = (p_x - m_origin).normeSQ();
+			double x_dist = (p_x - m_origin).norme();
 			if (x_dist < dist_min)
 			{
 				dist_min = x_dist;
@@ -101,7 +93,7 @@ std::optional<double> Ray::hitBB(const BoundingBox& bb) const
 		if (p_x.getY() > bb.m_lowerbound.getY() && p_x.getY() < bb.m_upperbound.getY()
 			&& p_x.getZ() > bb.m_lowerbound.getZ() && p_x.getZ() < bb.m_upperbound.getZ())
 		{
-			double x_dist = (p_x - m_origin).normeSQ();
+			double x_dist = (p_x - m_origin).norme();
 			if (x_dist < dist_min)
 			{
 				dist_min = x_dist;

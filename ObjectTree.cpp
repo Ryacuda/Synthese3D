@@ -31,6 +31,16 @@ std::optional<Vector3D> ObjectTree::findIntersection(const Ray& r)
 	return {};
 }
 
+std::optional< std::pair<double, Vector3D> > ObjectTree::findNormalAtIntersection(const Ray& r)
+{
+	if (r.hitBB(m_boundingbox).has_value())
+	{
+		return findNormalAtIntersection(r, {}, std::numeric_limits<double>::infinity());
+	}
+
+	return {};
+}
+
 int ObjectTree::depth()
 {
 	int depth_left = (m_left_tree ? m_left_tree->depth() : 0);
@@ -99,16 +109,11 @@ std::unique_ptr<ObjectTree> ObjectTree::makeTree(std::vector<Sphere> keys, int a
 std::optional<Vector3D> ObjectTree::findIntersection(const Ray& r, std::optional<Vector3D> closest_intersection, double dist_to_closest)
 {
 	// check intersection with the object
-	std::optional<Vector3D> p_i = r.hit(m_key);
-	if (p_i.has_value())
+	std::optional<double> t = r.hit(m_key);
+	if (t.has_value() && t.value() < dist_to_closest && t.value() >= 0)
 	{
-		double dist = (p_i.value() - r.getOrigin()).norme();
-
-		if (dist < dist_to_closest)
-		{
-			closest_intersection = p_i;
-			dist_to_closest = dist;
-		}
+		closest_intersection = t.value() * r.getDirection() + r.getOrigin();
+		dist_to_closest = t.value();
 	}
 	
 	if (m_left_tree)
@@ -120,7 +125,7 @@ std::optional<Vector3D> ObjectTree::findIntersection(const Ray& r, std::optional
 
 			if (p_i_left.has_value())
 			{
-				double dist = (p_i_left.value() - r.getOrigin()).norme();
+				double dist = (p_i_left.value() - r.getOrigin()).normeSQ();
 
 				if (dist < dist_to_closest)
 				{
@@ -140,7 +145,7 @@ std::optional<Vector3D> ObjectTree::findIntersection(const Ray& r, std::optional
 
 			if (p_i_right.has_value())
 			{
-				double dist = (p_i_right.value() - r.getOrigin()).norme();
+				double dist = (p_i_right.value() - r.getOrigin()).normeSQ();
 
 				if (dist < dist_to_closest)
 				{
@@ -154,6 +159,57 @@ std::optional<Vector3D> ObjectTree::findIntersection(const Ray& r, std::optional
 	return closest_intersection;
 }
 
+
+std::optional< std::pair<double, Vector3D> > ObjectTree::findNormalAtIntersection(const Ray& r, std::optional<Vector3D> normal_at_intersection, double dist_to_closest)
+{
+	// check intersection with the object
+	std::optional<double> t = r.hit(m_key);
+
+	if (t.has_value() && t.value() < dist_to_closest && t.value() >= 0)
+	{
+		normal_at_intersection = m_key.normal(t.value() * r.getDirection() + r.getOrigin());
+		dist_to_closest = t.value();
+	}
+
+	if (m_left_tree)
+	{
+		std::optional<double> t_left_BB = r.hitBB(m_left_tree->getBoundingbox());
+		if (t_left_BB.has_value() && (t_left_BB.value() < dist_to_closest) && t_left_BB.value() >= 0)
+		{
+			std::optional< std::pair<double, Vector3D> > normal_left = m_left_tree->findNormalAtIntersection(r, normal_at_intersection, dist_to_closest);
+
+			if (normal_left.has_value() && normal_left.value().first >= 0 && normal_left.value().first < dist_to_closest)
+			{
+				dist_to_closest = normal_left.value().first;
+				normal_at_intersection = normal_left.value().second;
+			}
+		}
+	}
+
+	if (m_right_tree)
+	{
+		std::optional<double> t_right_BB = r.hitBB(m_right_tree->getBoundingbox());
+		if (t_right_BB.has_value() && t_right_BB.value() < dist_to_closest && t_right_BB.value() >= 0)
+		{
+			std::optional< std::pair<double, Vector3D> > normal_right = m_right_tree->findNormalAtIntersection(r, normal_at_intersection, dist_to_closest);
+
+			if (normal_right.has_value() && normal_right.value().first >= 0 && normal_right.value().first < dist_to_closest)
+			{
+				dist_to_closest = normal_right.value().first;
+				normal_at_intersection = normal_right.value().second;
+			}
+		}
+	}
+
+	if (normal_at_intersection.has_value())
+	{
+		return std::pair < double, Vector3D >(dist_to_closest, normal_at_intersection.value());
+	}
+	else
+	{
+		return {};
+	}
+}
 
 
 BoundingBox ObjectTree::computeBB()

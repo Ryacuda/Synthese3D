@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <random>
+#include <utility>
 
 #include "Sphere.hpp"
 #include "Ray.hpp"
@@ -23,6 +24,8 @@ public:
 
 	std::optional<Vector3D> findIntersection(const Ray& r);
 
+	std::optional< std::pair<double, Vector3D> > findNormalAtIntersection(const Ray& r);
+
 	int depth();
 
 	void displayBBVolumes();
@@ -41,6 +44,8 @@ private:
 	BoundingBox computeBB();
 
 	std::optional<Vector3D> findIntersection(const Ray& r, std::optional<Vector3D> closest_intersection, double dist_to_closest);
+
+	std::optional< std::pair<double, Vector3D> > findNormalAtIntersection(const Ray& r, std::optional<Vector3D> normal_at_intersection, double dist_to_closest);
 };
 
 void test_tree_object();
